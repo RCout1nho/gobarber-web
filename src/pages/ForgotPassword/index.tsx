@@ -1,61 +1,62 @@
-import React, { useCallback, useRef } from 'react';
-import { FiArrowLeft, FiMail, FiLock, FiUser } from 'react-icons/fi';
-import { FormHandles } from '@unform/core';
+import React, { useCallback, useRef, useState } from 'react';
+import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
 import { Form } from '@unform/web';
+import { FormHandles } from '@unform/core';
 import * as yup from 'yup';
 import { Link, useHistory } from 'react-router-dom';
 
-import api from '../../services/api';
+import logo from '../../assets/logo.svg';
 
 import { useToast } from '../../hooks/toast';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
-import logo from '../../assets/logo.svg';
-
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
 import { Container, Background, Content, AnimationContainer } from './styles';
+import api from '../../services/api';
 
-interface SignUpFormData {
-  name: string;
+interface ForgotFormData {
   email: string;
-  password: string;
 }
 
-const SignUp: React.FC = () => {
+const ForgotPassword: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
+  // const history = useHistory();
+
   const { addToast } = useToast();
-  const history = useHistory();
 
   const handleSubmit = useCallback(
-    async (data: SignUpFormData) => {
+    async (data: ForgotFormData) => {
       try {
+        setLoading(true);
         formRef.current?.setErrors({});
 
         const schema = yup.object().shape({
-          name: yup.string().required('Nome obrigatório'),
           email: yup
             .string()
             .required('E-mail obrigatório')
             .email('Digite um e-mail válido'),
-          password: yup.string().min(6, 'No mínimo 6 caracteres'),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        await api.post('/users', data);
-
-        history.push('/');
+        await api.post('/password/forgot', {
+          email: data.email,
+        });
 
         addToast({
           type: 'success',
-          title: 'Cadastro realizado com sucesso!',
-          description: 'Você já pode fazer seu logon no GoBarber!',
+          title: 'E-mail de recuperação enviado',
+          description:
+            'Enviamos um e-mail para confirmar recuperação de senha, cheque sua caixa de entrada',
         });
+
+        // history.push('/dashboard');
       } catch (err) {
         if (err instanceof yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -67,41 +68,38 @@ const SignUp: React.FC = () => {
 
         addToast({
           type: 'error',
-          title: 'Erro no cadastro',
-          description: 'Ocorreu um erro ao fazer cadastro, tente novamente.',
+          title: 'Erro na recuperação de senha',
+          description:
+            'Ocorreu um erro ao tentar realizar a recuperação de senha, tente novamente',
         });
+      } finally {
+        setLoading(false);
       }
     },
-    [addToast, history],
+    [addToast],
   );
 
   return (
     <Container>
-      <Background />
-
       <Content>
         <AnimationContainer>
           <img src={logo} alt="GoBarber" />
           <Form ref={formRef} onSubmit={handleSubmit}>
-            <h1>Faça seu Cadastro</h1>
-            <Input icon={FiUser} name="name" placeholder="Nome" />
+            <h1>Recuperar senha</h1>
             <Input icon={FiMail} name="email" placeholder="E-mail" />
-            <Input
-              icon={FiLock}
-              name="password"
-              type="password"
-              placeholder="Senha"
-            />
-            <Button type="submit">Cadastrar</Button>
+            <Button loading={loading} type="submit">
+              Recuperar
+            </Button>
           </Form>
           <Link to="/">
-            <FiArrowLeft />
-            Voltar para logon
+            <FiLogIn />
+            Voltar ao login
           </Link>
         </AnimationContainer>
       </Content>
+      <Background />
     </Container>
   );
 };
 
-export default SignUp;
+export default ForgotPassword;

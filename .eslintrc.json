@@ -29,6 +29,8 @@
     "prettier"
   ],
   "rules": {
+    "import/no-duplicates": "off",
+    "@typescript-eslint/camelcase": "off",
     "no-unused-expressions": "off",
     "react/jsx-props-no-spreading": "off",
     "react/prop-types": "off",
