@@ -5,7 +5,6 @@ import { Form } from '@unform/web';
 import * as yup from 'yup';
 import { useHistory, Link } from 'react-router-dom';
 
-import { Console } from 'console';
 import api from '../../services/api';
 
 import { useToast } from '../../hooks/toast';
