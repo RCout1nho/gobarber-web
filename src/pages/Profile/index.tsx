@@ -65,7 +65,6 @@ const Profile: React.FC = () => {
         const {
           name,
           email,
-          old_password,
           password,
           password_confirmation,
         } = data;
