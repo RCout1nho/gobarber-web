@@ -5,6 +5,16 @@
 <img src="./resources/Dashboard.png" height="300px" >
 <img src="./resources/Perfil.png" height="300px" >
 
+## Tecnologias
+
+- Netlify
+- Google Cloud Store
+- Github Actions
+- Styled Components
+- Jest
+- Eslint
+- Prettier
+
 ## Como executar
 
 Primeiramente baixe, configure e execute o [backend](https://github.com/RCout1nho/gobarber-backend)
